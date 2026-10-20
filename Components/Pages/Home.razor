@@ -1,0 +1,333 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@implements IDisposable
+@using MindRush.Models
+
+<PageTitle>MindRush | 60 seconds. Infinite bragging rights.</PageTitle>
+
+<HeadContent>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet" />
+</HeadContent>
+
+<div class="min-h-screen bg-[#F4EFEA] text-[#383838] font-['DM_Sans',ui-sans-serif,system-ui,sans-serif] antialiased seylection:bg-[#FFDE00]">
+
+    @* ============ HEADER ============ *@
+    <header class="sticky top-0 z-50 border-b-2 border-[#383838] bg-[#F4EFEA]/95 backdrop-blur">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+            <a href="/" class="group flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">
+                <span class="grid h-10 w-10 place-items-center rounded-xl border-2 border-[#383838] bg-[#FFDE00] shadow-[3px_3px_0px_#383838] transition group-hover:-rotate-6">
+                    <BrainBolt Class="h-6 w-6" />
+                </span>
+                <span class="font-['Space_Mono',ui-monospace,monospace] text-2xl font-bold tracking-tight">MindRush</span>
+            </a>
+
+            <nav class="hidden items-center gap-8 md:flex" aria-label="Main">
+                @foreach (var (label, href) in NavLinks)
+                {
+                    <a href="@href" class="font-medium uppercase tracking-wide underline-offset-8 decoration-4 decoration-[#6FC2FF] hover:underline focus-visible:underline">@label</a>
+                }
+                <a href="/play" class="rounded-xl border-2 border-[#383838] bg-[#6FC2FF] px-5 py-2.5 font-['Space_Mono',monospace] text-sm font-bold uppercase tracking-wide shadow-[4px_4px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_#383838] active:translate-x-1 active:translate-y-1 active:shadow-none">PLAY NOW</a>
+            </nav>
+
+            <button type="button" class="grid h-11 w-11 place-items-center rounded-xl border-2 border-[#383838] bg-white shadow-[3px_3px_0px_#383838] md:hidden"
+                    aria-label="Toggle menu" aria-expanded="@(menuOpen ? "true" : "false")" @onclick="() => menuOpen = !menuOpen">
+                <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    @if (menuOpen)
+                    {
+                        <path d="M6 6l12 12M18 6L6 18" />
+                    }
+                    else
+                    {
+                        <path d="M4 7h16M4 12h16M4 17h16" />
+                    }
+                </svg>
+            </button>
+        </div>
+
+        @if (menuOpen)
+        {
+            <nav class="border-t-2 border-[#383838] bg-[#FFDE00] px-4 py-4 md:hidden" aria-label="Mobile">
+                <ul class="flex flex-col gap-3">
+                    @foreach (var (label, href) in NavLinks)
+                    {
+                        <li><a href="@href" class="block rounded-lg border-2 border-[#383838] bg-white px-4 py-3 font-bold" @onclick="() => menuOpen = false">@label</a></li>
+                    }
+                    <li><a href="/play" class="block rounded-lg border-2 border-[#383838] bg-[#6FC2FF] px-4 py-3 text-center font-['Space_Mono',monospace] font-bold shadow-[4px_4px_0px_#383838]">PLAY NOW</a></li>
+                </ul>
+            </nav>
+        }
+    </header>
+
+    <main>
+        @* ============ HERO ============ *@
+        <section class="relative overflow-hidden">
+            <div class="pointer-events-none absolute -left-10 top-24 h-24 w-24 rotate-12 rounded-3xl border-2 border-[#383838] bg-[#FF8FB8] opacity-80 sm:h-32 sm:w-32" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute right-[8%] top-10 hidden h-16 w-16 rounded-full border-2 border-[#383838] bg-[#7ED957] lg:block" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute bottom-6 left-[45%] hidden h-10 w-10 rotate-45 border-2 border-[#383838] bg-[#F9963F] lg:block" aria-hidden="true"></div>
+
+            <div class="relative mx-auto grid max-w-7xl items-center gap-14 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:gap-10 lg:px-8 lg:py-28">
+                <div>
+                    <p class="inline-flex items-center gap-2 rounded-full border-2 border-[#383838] bg-white px-4 py-1.5 text-sm font-bold shadow-[3px_3px_0px_#383838]">
+                        <span class="h-2.5 w-2.5 rounded-full bg-[#7ED957] motion-safe:animate-pulse"></span>
+                        Free to play. No sign-up needed.
+                    </p>
+
+                    <h1 class="mt-6 font-['Space_Mono',ui-monospace,monospace] text-[2.6rem] font-bold leading-[1.02] tracking-tight sm:text-6xl xl:text-6xl">
+                        <span class="inline-block bg-[#FFDE00] px-2 -rotate-1">TEST YOUR WIT.</span><br />
+                        <span class="mt-2 inline-block bg-[#6FC2FF] px-2 rotate-1">BEAT THE CLOCK.</span><br />
+                        <span class="mt-2 inline-block bg-[#F9963F] px-2 -rotate-1">CLAIM THE CROWN.</span>
+                    </h1>
+
+                    <p class="mt-8 max-w-lg text-lg leading-relaxed sm:text-xl">
+                        Test your speed, outsmart the timer, and claim the ultimate bragging rights.
+                    </p>
+
+                    <div class="mt-9 flex flex-col gap-4 sm:flex-row">
+                        <a href="/play" class="rounded-xl border-2 border-[#383838] bg-[#FFDE00] px-8 py-4 text-center font-['Space_Mono',monospace] text-base font-bold shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">START PLAYING</a>
+                        <a href="#how-to-play" class="rounded-xl border-2 border-[#383838] bg-white px-8 py-4 text-center font-['Space_Mono',monospace] text-base font-bold shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">HOW TO PLAY</a>
+                    </div>
+                </div>
+
+                @* ---- Trivia card mockup ---- *@
+                <div class="relative mx-auto w-full max-w-md lg:max-w-lg">
+                    <div class="absolute inset-0 translate-x-4 translate-y-4 rotate-3 rounded-3xl border-2 border-[#383838] bg-[#FF8FB8]" aria-hidden="true"></div>
+                    <div class="absolute inset-0 -translate-x-2 translate-y-2 -rotate-2 rounded-3xl border-2 border-[#383838] bg-[#7ED957]" aria-hidden="true"></div>
+
+                    <div class="relative rounded-3xl border-2 border-[#383838] bg-white p-5 shadow-[8px_8px_0px_#383838] sm:p-7">
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="rounded-full border-2 border-[#383838] bg-[#6FC2FF] px-3 py-1 text-sm font-bold">🔭 Science</span>
+
+                            <div class="relative grid h-16 w-16 place-items-center" role="timer" aria-label="@seconds seconds left">
+                                <svg viewBox="0 0 64 64" class="absolute inset-0 -rotate-90">
+                                    <circle cx="32" cy="32" r="27" fill="#FFDE00" stroke="#383838" stroke-width="3" />
+                                    <circle cx="32" cy="32" r="27" fill="none" stroke="#F9963F" stroke-width="7"
+                                            stroke-linecap="round" stroke-dasharray="169.6"
+                                            stroke-dashoffset="@TimerOffset" class="transition-all duration-1000 ease-linear" />
+                                </svg>
+                                <span class="relative font-['Space_Mono',monospace] text-xl font-bold">@seconds</span>
+                            </div>
+                        </div>
+
+                        <p class="mt-6 font-['Space_Mono',monospace] text-xl font-bold leading-snug sm:text-2xl">
+                            Which planet in our solar system has the most moons?
+                        </p>
+
+                        <div class="mt-6 grid gap-3">
+                            @for (var i = 0; i < Answers.Length; i++)
+                            {
+                                var index = i;
+                                var answer = Answers[i];
+                                <button type="button" disabled="@(picked is not null)" @onclick="() => Pick(index)"
+                                        class="@AnswerClass(index) flex items-center gap-3 rounded-xl border-2 border-[#383838] px-4 py-3 text-left font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#383838]">
+                                    <span class="grid h-7 w-7 shrink-0 place-items-center rounded-md border-2 border-[#383838] bg-white font-['Space_Mono',monospace] text-sm">@("ABCD"[i])</span>
+                                    @answer.Text
+                                    @if (picked is not null && answer.Correct)
+                                    {
+                                        <span class="ml-auto font-['Space_Mono',monospace] text-sm">+10</span>
+                                    }
+                                </button>
+                            }
+                        </div>
+
+                        <div class="mt-5 flex items-center justify-between text-sm font-bold">
+                            <span>Score: <span class="font-['Space_Mono',monospace]">@score</span></span>
+                            @if (picked is not null)
+                            {
+                                <button type="button" class="underline decoration-[#6FC2FF] decoration-4 underline-offset-4" @onclick="ResetCard">Try again</button>
+                            }
+                            else
+                            {
+                                <span class="text-[#383838]/60">Tap an answer</span>
+                            }
+                        </div>
+                    </div>
+
+                    @* floating stickers *@
+                    <div class="absolute -right-3 -top-6 rotate-12 rounded-xl border-2 border-[#383838] bg-[#FFDE00] px-3 py-1.5 font-['Space_Mono',monospace] text-sm font-bold shadow-[3px_3px_0px_#383838] sm:-right-6" aria-hidden="true">+10 pts!</div>
+                    <div class="absolute -bottom-6 -left-3 -rotate-6 rounded-xl border-2 border-[#383838] bg-[#F9963F] px-3 py-1.5 font-['Space_Mono',monospace] text-sm font-bold shadow-[3px_3px_0px_#383838] motion-safe:animate-bounce sm:-left-6" aria-hidden="true">🔥 3 in a row</div>
+                </div>
+            </div>
+        </section>
+
+        @* ============ HIGHLIGHTS ============ *@
+        <section class="border-y-2 border-[#383838] bg-white">
+            <div class="mx-auto grid max-w-7xl gap-6 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8 lg:py-16">
+                @foreach (var h in Highlights)
+                {
+                    <article class="rounded-2xl border-2 border-[#383838] p-6 shadow-[4px_4px_0px_#383838] @h.Bg">
+                        <div class="font-['Space_Mono',monospace] text-5xl font-bold leading-none sm:text-6xl">@h.Big</div>
+                        <p class="mt-3 font-['Space_Mono',monospace] text-lg font-bold">@h.Title</p>
+                        <p class="mt-1">@h.Text</p>
+                    </article>
+                }
+            </div>
+        </section>
+
+        @* ============ CATEGORIES ============ *@
+        <section id="categories" class="mx-auto max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+            <div class="max-w-2xl">
+                <h2 class="font-['Space_Mono',monospace] text-3xl font-bold tracking-tight sm:text-5xl">Pick your battlefield</h2>
+                <p class="mt-4 text-lg">Six topics, endless questions. Every round mixes them up, so nobody gets to hide.</p>
+            </div>
+
+            <ul class="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
+                @foreach (var c in categories)
+                {
+                    var isActive = activeCategory == c.Name;
+                    <li>
+                        <button type="button" aria-pressed="@isActive"
+                                @onclick="() => activeCategory = isActive ? null : c.Name"
+                                class="group flex w-full flex-col items-start gap-3 rounded-2xl border-2 border-[#383838] p-4 text-left transition hover:-translate-y-1 hover:-rotate-1 hover:shadow-[6px_6px_0px_#383838] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838] sm:flex-row sm:items-center sm:gap-4 sm:p-5 @c.ColorClass @(isActive ? "translate-x-0.5 translate-y-0.5 shadow-[2px_2px_0px_#383838]" : "shadow-[4px_4px_0px_#383838]")">
+                            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-xl border-2 border-[#383838] bg-white text-3xl transition group-hover:rotate-12" aria-hidden="true">@c.Icon</span>
+                            <span>
+                                <span class="block font-['Space_Mono',monospace] text-base font-bold leading-tight sm:text-lg">@c.Name</span>
+                                <span class="mt-0.5 block text-sm">@(isActive ? "Locked in!" : c.Blurb)</span>
+                            </span>
+                        </button>
+                    </li>
+                }
+            </ul>
+        </section>
+
+        @* ============ HOW TO PLAY ============ *@
+        <section id="how-to-play" class="scroll-mt-16 border-y-2 border-[#383838] bg-[#6FC2FF]">
+            <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+                <h2 class="font-['Space_Mono',monospace] text-3xl font-bold tracking-tight sm:text-5xl">Three steps. Zero excuses.</h2>
+
+                <ol class="mt-12 grid gap-8 md:grid-cols-3">
+                    @foreach (var (step, i) in Steps.Select((s, i) => (s, i)))
+                    {
+                        <li class="relative rounded-2xl border-2 border-[#383838] bg-[#F4EFEA] p-6 pt-10 shadow-[6px_6px_0px_#383838] @(i == 1 ? "md:translate-y-6" : "")">
+                            <span class="absolute -top-6 left-6 grid h-12 w-12 place-items-center rounded-full border-2 border-[#383838] font-['Space_Mono',monospace] text-xl font-bold shadow-[3px_3px_0px_#383838] @step.Bg">@(i + 1)</span>
+                            <div class="text-4xl" aria-hidden="true">@step.Icon</div>
+                            <h3 class="mt-3 font-['Space_Mono',monospace] text-xl font-bold">@step.Title</h3>
+                            <p class="mt-2 leading-relaxed">@step.Text</p>
+                        </li>
+                    }
+                </ol>
+            </div>
+        </section>
+
+        @* ============ FINAL CTA ============ *@
+        <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+            <div class="relative overflow-hidden rounded-3xl border-2 border-[#383838] bg-[#FFDE00] px-6 py-14 text-center shadow-[8px_8px_0px_#383838] sm:px-12 sm:py-20">
+                <div class="pointer-events-none absolute -left-8 -top-8 h-28 w-28 rounded-full border-2 border-[#383838] bg-[#FF8FB8]" aria-hidden="true"></div>
+                <div class="pointer-events-none absolute -bottom-10 -right-6 h-32 w-32 rotate-12 rounded-3xl border-2 border-[#383838] bg-[#6FC2FF]" aria-hidden="true"></div>
+                <div class="pointer-events-none absolute bottom-8 left-[12%] hidden h-8 w-8 rotate-45 border-2 border-[#383838] bg-[#7ED957] sm:block" aria-hidden="true"></div>
+
+                <div class="relative">
+                    <h2 class="font-['Space_Mono',monospace] text-3xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">READY TO TEST<br class="hidden sm:block" /> YOUR BRAIN?</h2>
+                    <p class="mx-auto mt-5 max-w-md text-lg">One minute is all it takes to find out. The clock starts when you do.</p>
+                    <a href="/play" class="mt-9 inline-block rounded-xl border-2 border-[#383838] bg-[#383838] px-10 py-5 font-['Space_Mono',monospace] text-lg font-bold text-[#FFDE00] shadow-[6px_6px_0px_#F9963F] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#F9963F] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">PLAY NOW</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    @* ============ FOOTER ============ *@
+    <footer class="border-t-2 border-[#383838] bg-white">
+        <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 py-10 sm:px-6 md:flex-row lg:px-8">
+            <a href="/" class="flex items-center gap-2.5">
+                <span class="grid h-9 w-9 place-items-center rounded-lg border-2 border-[#383838] bg-[#6FC2FF]"><BrainBolt Class="h-5 w-5" /></span>
+                <span class="font-['Space_Mono',monospace] text-xl font-bold">MindRush</span>
+            </a>
+            <nav aria-label="Footer">
+                <ul class="flex flex-wrap justify-center gap-x-8 gap-y-2 font-medium">
+                    @foreach (var (label, href) in NavLinks)
+                    {
+                        <li><a href="@href" class="underline-offset-4 decoration-2 decoration-[#F9963F] hover:underline">@label</a></li>
+                    }
+                    <li><a href="/play" class="underline-offset-4 decoration-2 decoration-[#F9963F] hover:underline">Play now</a></li>
+                </ul>
+            </nav>
+            <p class="text-sm text-[#383838]/70">© @DateTime.Now.Year MindRush. Made for curious brains.</p>
+        </div>
+    </footer>
+</div>
+
+@code {
+    // ---------- State ----------
+    private bool menuOpen;
+    private string? activeCategory;
+    private int seconds = 60;
+    private int score;
+    private int? picked;
+    private Timer? timer;
+
+    private const double Circumference = 169.6;
+    private double TimerOffset => Circumference * (1 - seconds / 60.0);
+
+    // ---------- Data ----------
+    private static readonly (string Label, string Href)[] NavLinks =
+    {
+        ("HOME", "/"),
+        ("HOW TO PLAY", "#how-to-play"),
+        ("LEADERBOARD", "/leaderboard"),
+    };
+
+    private record Answer(string Text, bool Correct);
+    private static readonly Answer[] Answers =
+    {
+        new("Jupiter", false),
+        new("Saturn", true),
+        new("Mars", false),
+        new("Venus", false),
+    };
+
+    private record Highlight(string Big, string Title, string Text, string Bg);
+    private static readonly Highlight[] Highlights =
+    {
+        new(GameSettings.RoundSeconds.ToString(), "SECONDS", "One minute on the clock. Answer as many as you can.", "bg-[#FFDE00]"),
+        new($"+{GameSettings.PointsPerCorrect}", "POINTS PER CORRECT ANSWER", "Every right answer adds up. Streaks keep you climbing.", "bg-[#6FC2FF]"),
+        new("6", "TRIVIA CATEGORIES", "From atoms to athletes, there is something for everyone.", "bg-[#FF8FB8]"),
+    };
+
+    private IReadOnlyList<Category> categories = SampleData.Categories;
+
+    private record Step(string Icon, string Title, string Text, string Bg);
+    private static readonly Step[] Steps =
+    {
+        new("🚀", "Start the Game", "Hit play and the 60-second timer begins. No account needed.", "bg-[#FFDE00]"),
+        new("⚡", "Answer Quickly", "Pick the right answer fast. Each correct one scores 10 points.", "bg-[#FF8FB8]"),
+        new("🏆", "Beat Your Best Score", "When time runs out, check your score and go again to top it.", "bg-[#7ED957]"),
+    };
+
+    // ---------- Behaviour ----------
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        timer = new Timer(_ => InvokeAsync(() =>
+        {
+            seconds = seconds <= 1 ? 60 : seconds - 1;
+            StateHasChanged();
+        }), null, 1000, 1000);
+    }
+
+    private void Pick(int index)
+    {
+        if (picked is not null) return;
+        picked = index;
+        if (Answers[index].Correct) score += 10;
+    }
+
+    private void ResetCard()
+    {
+        picked = null;
+        score = 0;
+    }
+
+    private string AnswerClass(int index)
+    {
+        if (picked is null)
+            return "bg-[#F4EFEA] shadow-[3px_3px_0px_#383838] hover:-translate-y-0.5 hover:bg-[#FFDE00]";
+
+        if (Answers[index].Correct) return "bg-[#7ED957]";
+        if (picked == index) return "bg-[#FF8FB8] line-through";
+        return "bg-[#F4EFEA] opacity-50";
+    }
+
+    public void Dispose() => timer?.Dispose();
+}

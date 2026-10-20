@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\MidtermExam.bundle.scp.css",
+      "PackagePath": "staticwebassets\\MidtermExam.bundle.scp.css"
+    },
+    {
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.MidtermExam.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.MidtermExam.props",
+      "PackagePath": "build\\MidtermExam.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.MidtermExam.props",
+      "PackagePath": "buildMultiTargeting\\MidtermExam.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.MidtermExam.props",
+      "PackagePath": "buildTransitive\\MidtermExam.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

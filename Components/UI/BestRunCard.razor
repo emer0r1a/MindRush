@@ -1,0 +1,35 @@
+<section class="rounded-2xl border-2 border-[#383838] bg-[#6FC2FF] p-5 shadow-[6px_6px_0px_#383838]" aria-labelledby="best-run">
+    <div class="flex items-center justify-between">
+        <h2 id="best-run" class="font-['Space_Mono',monospace] text-lg font-bold">YOUR BEST RUN</h2>
+        <span class="grid h-10 w-10 place-items-center rounded-lg border-2 border-[#383838] bg-white text-xl" aria-hidden="true">⚡</span>
+    </div>
+
+    @if (Score is int score)
+    {
+        <p class="mt-4 font-['Space_Mono',monospace] text-6xl font-bold leading-none">@score</p>
+        <p class="mt-1 font-bold">points</p>
+        <div class="mt-5 flex items-center gap-3 rounded-xl border-2 border-[#383838] bg-white px-4 py-3">
+            <span class="font-bold">Your rank</span>
+            <span class="ml-auto rounded-lg border-2 border-[#383838] bg-[#FFDE00] px-3 py-0.5 font-['Space_Mono',monospace] font-bold">#@Rank</span>
+        </div>
+        <a href="/play" class="@BtnSmall mt-5 block bg-[#FFDE00] text-center">PLAY AGAIN</a>
+    }
+    else
+    {
+        <p class="mt-4 text-lg font-bold leading-snug">Play your first round to earn a spot on the board.</p>
+        <a href="/play" class="@BtnSmall mt-5 block bg-[#FFDE00] text-center">PLAY NOW</a>
+    }
+</section>
+
+@code {
+    /// <summary>The player's best score, or null when they haven't played yet.</summary>
+    [Parameter] public int? Score { get; set; }
+
+    /// <summary>The player's rank on the board.</summary>
+    [Parameter] public int? Rank { get; set; }
+
+    private const string BtnSmall =
+        "rounded-xl border-2 border-[#383838] px-5 py-2.5 font-['Space_Mono',monospace] text-sm font-bold shadow-[4px_4px_0px_#383838] " +
+        "transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_#383838] active:translate-x-1 active:translate-y-1 active:shadow-none " +
+        "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]";
+}

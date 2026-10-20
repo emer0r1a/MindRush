@@ -1,0 +1,308 @@
+@page "/play"
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@implements IDisposable
+@using MindRush.Models
+@inject NavigationManager Nav
+
+<PageTitle>MindRush | Game on!</PageTitle>
+
+<HeadContent>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet" />
+</HeadContent>
+
+@if (questions.Count == 0)
+{
+    <div class="grid min-h-screen place-items-center bg-[#F4EFEA] px-4 text-center font-['Space_Mono',monospace] text-xl font-bold text-[#383838]">
+        No questions found.
+    </div>
+}
+else
+{
+<div class="min-h-screen bg-[#F4EFEA] text-[#383838] font-['DM_Sans',ui-sans-serif,system-ui,sans-serif] antialiased selection:bg-[#FFDE00]">
+
+    @* ============ COMPACT HEADER ============ *@
+    <header class="border-b-2 border-[#383838] bg-[#F4EFEA]">
+        <div class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+            <div class="flex items-center gap-2.5">
+                <span class="grid h-10 w-10 place-items-center rounded-xl border-2 border-[#383838] bg-[#FFDE00] shadow-[3px_3px_0px_#383838]">
+                    <BrainBolt Class="h-6 w-6" />
+                </span>
+                <span class="hidden font-['Space_Mono',ui-monospace,monospace] text-2xl font-bold tracking-tight sm:inline">MindRush</span>
+            </div>
+
+            <p class="rounded-full border-2 border-[#383838] bg-[#6FC2FF] px-3 py-1.5 font-['Space_Mono',monospace] text-xs font-bold shadow-[3px_3px_0px_#383838] sm:px-4 sm:text-sm">60-SECOND CHALLENGE</p>
+
+            <button type="button" @onclick="OpenExit"
+                    class="rounded-xl border-2 border-[#383838] bg-white px-4 py-2 font-['Space_Mono',monospace] text-sm font-bold shadow-[4px_4px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-[#FF8FB8] hover:shadow-[2px_2px_0px_#383838] active:translate-x-1 active:translate-y-1 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">
+                EXIT
+            </button>
+        </div>
+    </header>
+
+    <main class="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-6 sm:gap-8 sm:px-6 sm:py-10">
+
+        @* ============ STATUS STRIP ============ *@
+        <section aria-label="Game status" class="overflow-hidden rounded-2xl border-2 border-[#383838] bg-white shadow-[4px_4px_0px_#383838]">
+            <div class="grid grid-cols-3 divide-x-2 divide-[#383838]">
+                <div class="p-3 text-center sm:p-4 @(seconds <= GameSettings.LowTimeSeconds ? "bg-[#FF8FB8]" : "bg-[#6FC2FF]")" role="timer" aria-label="@seconds seconds left">
+                    <p class="text-xs font-bold sm:text-sm">Time</p>
+                    <p class="font-['Space_Mono',monospace] text-2xl font-bold leading-tight sm:text-4xl">00:@seconds.ToString("D2")</p>
+                </div>
+                <div class="bg-[#FFDE00] p-3 text-center sm:p-4">
+                    <p class="text-xs font-bold sm:text-sm">Score</p>
+                    <p class="font-['Space_Mono',monospace] text-2xl font-bold leading-tight sm:text-4xl">@score.ToString("D3")</p>
+                </div>
+                <div class="p-3 text-center sm:p-4">
+                    <p class="text-xs font-bold sm:text-sm">Question</p>
+                    <p class="font-['Space_Mono',monospace] text-2xl font-bold leading-tight sm:text-4xl">@((qIndex + 1).ToString("D2"))</p>
+                </div>
+            </div>
+
+            <div class="border-t-2 border-[#383838] bg-[#F4EFEA] p-3">
+                <div class="h-4 overflow-hidden rounded-full border-2 border-[#383838] bg-white" role="progressbar"
+                     aria-label="Time remaining" aria-valuemin="0" aria-valuemax="@GameSettings.RoundSeconds" aria-valuenow="@seconds">
+                    <div class="h-full rounded-full border-r-2 border-[#383838] transition-all duration-1000 ease-linear @(seconds <= GameSettings.LowTimeSeconds ? "bg-[#F9963F] motion-safe:animate-pulse" : "bg-[#FFDE00]")"
+                         style="width:@(seconds * 100 / GameSettings.RoundSeconds)%"></div>
+                </div>
+            </div>
+        </section>
+
+        @* ============ QUESTION CARD ============ *@
+        <section aria-labelledby="question-text" class="relative rounded-3xl border-2 border-[#383838] bg-white p-5 shadow-[8px_8px_0px_#383838] sm:p-8">
+            <div class="flex flex-col-reverse items-start gap-6 md:flex-row md:items-center md:justify-between">
+                <div class="max-w-xl">
+                    <span class="inline-block rounded-full border-2 border-[#383838] px-3 py-1 font-['Space_Mono',monospace] text-sm font-bold @(Current.Category?.ColorClass)">@(Current.Category?.Name.ToUpperInvariant())</span>
+                    <h1 id="question-text" class="mt-4 font-['Space_Mono',ui-monospace,monospace] text-2xl font-bold leading-tight tracking-tight sm:text-4xl">@Current.Text</h1>
+                </div>
+
+                @* playful illustration *@
+                <div class="relative mx-auto shrink-0 md:mx-0" aria-hidden="true">
+                    <div class="absolute inset-0 translate-x-2 translate-y-2 rotate-6 rounded-3xl border-2 border-[#383838] bg-[#FF8FB8]"></div>
+                    <div class="relative grid h-28 w-28 -rotate-3 place-items-center rounded-3xl border-2 border-[#383838] text-6xl sm:h-36 sm:w-36 sm:text-7xl @(Current.Category?.ColorClass)">
+                        <span class="motion-safe:animate-bounce">@Current.Emoji</span>
+                    </div>
+                    <div class="absolute -right-3 -top-3 h-6 w-6 rotate-45 border-2 border-[#383838] bg-[#7ED957]"></div>
+                    <div class="absolute -bottom-3 -left-3 h-5 w-5 rounded-full border-2 border-[#383838] bg-[#FFDE00]"></div>
+                </div>
+            </div>
+        </section>
+
+        @* ============ ANSWERS ============ *@
+        <section aria-label="Answers">
+            <ul class="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
+                @for (var i = 0; i < Current.Options.Count; i++)
+                {
+                    var index = i;
+                    var isCorrect = index == Current.CorrectIndex;
+                    var isPicked = picked == index;
+                    var showCorrect = picked is not null && isCorrect;
+                    var showWrong = isPicked && !isCorrect;
+
+                    <li>
+                        <button type="button" @onclick="() => Pick(index)" aria-disabled="@(locked ? "true" : "false")"
+                                class="@AnswerClass(showCorrect, showWrong) group flex w-full items-center gap-4 rounded-2xl border-2 border-[#383838] p-4 text-left transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838] sm:p-5">
+                            <span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl border-2 border-[#383838] bg-white font-['Space_Mono',monospace] text-xl font-bold transition group-hover:rotate-6">@("ABCD"[i])</span>
+                            <span class="font-['Space_Mono',monospace] text-xl font-bold sm:text-2xl">@Current.Options[i].Text</span>
+
+                            @if (showCorrect)
+                            {
+                                <span class="ml-auto grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-[#383838] bg-white" aria-label="Correct">
+                                    <svg viewBox="0 0 24 24" class="h-6 w-6 text-[#2E9E2E]" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7" /></svg>
+                                </span>
+                            }
+                            else if (showWrong)
+                            {
+                                <span class="ml-auto grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-[#383838] bg-white" aria-label="Incorrect">
+                                    <svg viewBox="0 0 24 24" class="h-6 w-6 text-[#D93636]" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                                </span>
+                            }
+                        </button>
+                    </li>
+                }
+            </ul>
+
+            @* brief feedback *@
+            <div class="mt-5 flex min-h-12 flex-col items-center justify-between gap-3 sm:flex-row" aria-live="polite">
+                <p class="rounded-full border-2 border-[#383838] bg-white px-4 py-2 font-['Space_Mono',monospace] text-sm font-bold shadow-[3px_3px_0px_#383838]">+@GameSettings.PointsPerCorrect POINTS PER CORRECT ANSWER</p>
+
+                @if (picked is not null)
+                {
+                    <p class="rounded-full border-2 border-[#383838] px-4 py-2 font-bold @(picked == Current.CorrectIndex ? "bg-[#7ED957]" : "bg-[#FF6B6B]")">
+                        @(picked == Current.CorrectIndex ? $"Correct! +{GameSettings.PointsPerCorrect} points" : $"Not quite. It's {Current.Options[Current.CorrectIndex].Text}.")
+                    </p>
+                }
+            </div>
+        </section>
+    </main>
+
+    @* ============ TIME'S UP MODAL ============ *@
+    @if (timeUp)
+    {
+        <div class="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-[#383838]/60 p-4">
+            <div role="dialog" aria-modal="true" aria-labelledby="timeup-title"
+                 class="relative w-full max-w-md rounded-3xl border-2 border-[#383838] bg-white p-6 text-center shadow-[8px_8px_0px_#383838] sm:p-8">
+                <div class="absolute -left-3 -top-3 h-8 w-8 rotate-12 rounded-lg border-2 border-[#383838] bg-[#6FC2FF]" aria-hidden="true"></div>
+                <div class="absolute -right-3 top-10 h-6 w-6 rounded-full border-2 border-[#383838] bg-[#FF8FB8]" aria-hidden="true"></div>
+                <div class="absolute -bottom-3 left-10 h-6 w-6 rotate-45 border-2 border-[#383838] bg-[#7ED957]" aria-hidden="true"></div>
+
+                @* trophy illustration *@
+                <svg viewBox="0 0 120 120" class="mx-auto h-32 w-32 motion-safe:animate-bounce" fill="none" stroke="#383838" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                    <path d="M30 28H16v8a18 18 0 0 0 16 18" fill="#FFF" />
+                    <path d="M90 28h14v8a18 18 0 0 1-16 18" fill="#FFF" />
+                    <rect x="54" y="80" width="12" height="18" fill="#F9963F" />
+                    <rect x="36" y="98" width="48" height="12" rx="3" fill="#F9963F" />
+                    <path d="M30 14h60v32a30 30 0 0 1-60 0Z" fill="#FFDE00" />
+                    <path d="M60 24l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1Z" fill="#FFF" />
+                </svg>
+
+                <h2 id="timeup-title" class="mt-3 font-['Space_Mono',monospace] text-4xl font-bold tracking-tight">TIME'S UP!</h2>
+                <p class="mt-3 text-lg">You scored <span class="rounded-md bg-[#FFDE00] px-2 font-['Space_Mono',monospace] font-bold">@score</span> points with @correctCount correct @(correctCount == 1 ? "answer" : "answers").</p>
+
+                <button type="button" @ref="primaryBtn" @onclick="ViewResults"
+                        class="mt-8 w-full rounded-xl border-2 border-[#383838] bg-[#FFDE00] px-8 py-4 font-['Space_Mono',monospace] text-base font-bold shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">
+                    VIEW RESULTS
+                </button>
+            </div>
+        </div>
+    }
+
+    @* ============ EXIT CONFIRMATION MODAL ============ *@
+    @if (exitOpen && !timeUp)
+    {
+        <div class="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-[#383838]/60 p-4" @onkeydown="OnModalKey">
+            <div role="dialog" aria-modal="true" aria-labelledby="exit-title" aria-describedby="exit-text"
+                 class="relative w-full max-w-md rounded-3xl border-2 border-[#383838] bg-white p-6 shadow-[8px_8px_0px_#383838] sm:p-8">
+                <div class="absolute -right-3 -top-3 h-8 w-8 rotate-12 rounded-lg border-2 border-[#383838] bg-[#F9963F]" aria-hidden="true"></div>
+
+                <div class="text-5xl" aria-hidden="true">🚪</div>
+                <h2 id="exit-title" class="mt-3 font-['Space_Mono',monospace] text-3xl font-bold tracking-tight">Leave the game?</h2>
+                <p id="exit-text" class="mt-3 text-lg">The clock is paused. If you exit now, your score of <span class="font-['Space_Mono',monospace] font-bold">@score</span> won't be saved.</p>
+
+                <div class="mt-8 flex flex-col gap-4">
+                    <button type="button" @ref="primaryBtn" @onclick="CloseExit"
+                            class="w-full rounded-xl border-2 border-[#383838] bg-[#FFDE00] px-6 py-4 font-['Space_Mono',monospace] text-base font-bold shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">
+                        CONTINUE PLAYING
+                    </button>
+                    <button type="button" @onclick="ExitGame"
+                            class="w-full rounded-xl border-2 border-[#383838] bg-white px-6 py-4 font-['Space_Mono',monospace] text-base font-bold shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-[#FF8FB8] hover:shadow-[3px_3px_0px_#383838] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">
+                        EXIT GAME
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+}
+
+@code {
+    // ---------- State ----------
+    private IReadOnlyList<Question> questions = Array.Empty<Question>();
+    private int qIndex;
+    private int seconds = GameSettings.RoundSeconds;
+    private int score;
+    private int correctCount;
+    private int answeredCount;
+    private int? picked;
+    private bool locked;
+    private bool paused;
+    private bool exitOpen;
+    private bool timeUp;
+    private bool focusModal;
+    private Timer? timer;
+    private ElementReference primaryBtn;
+
+    private Question Current => questions[qIndex % questions.Count];
+
+    // ---------- Lifecycle ----------
+    protected override void OnInitialized()
+    {
+        questions = SampleData.GetRandomQuestions(GameSettings.QuestionsPerRound);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && questions.Count > 0)
+        {
+            timer = new Timer(_ => { _ = InvokeAsync(Tick); }, null, 1000, 1000);
+        }
+
+        if (focusModal)
+        {
+            focusModal = false;
+            await primaryBtn.FocusAsync();
+        }
+    }
+
+    private void Tick()
+    {
+        if (paused || timeUp) return;
+
+        seconds--;
+        if (seconds <= 0)
+        {
+            seconds = 0;
+            timeUp = true;
+            focusModal = true;
+            timer?.Dispose();
+        }
+        StateHasChanged();
+    }
+
+    // ---------- Actions ----------
+    private async Task Pick(int index)
+    {
+        if (locked || paused || timeUp) return;
+
+        picked = index;
+        locked = true;
+        answeredCount++;
+        if (index == Current.CorrectIndex)
+        {
+            score += GameSettings.PointsPerCorrect;
+            correctCount++;
+        }
+
+        await Task.Delay(GameSettings.FeedbackDelayMs);
+
+        if (timeUp) return;
+        qIndex++;
+        picked = null;
+        locked = false;
+    }
+
+    private void OpenExit()
+    {
+        paused = true;
+        exitOpen = true;
+        focusModal = true;
+    }
+
+    private void CloseExit()
+    {
+        exitOpen = false;
+        paused = false;
+    }
+
+    private void OnModalKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") CloseExit();
+    }
+
+    private void ExitGame() => Nav.NavigateTo("/");
+
+    // No storage yet, so the round is handed to the Results page through the URL.
+    private void ViewResults() =>
+        Nav.NavigateTo($"/results?score={score}&correct={correctCount}&answered={answeredCount}");
+
+    private string AnswerClass(bool showCorrect, bool showWrong)
+    {
+        if (showCorrect) return "bg-[#7ED957] shadow-[2px_2px_0px_#383838] translate-x-0.5 translate-y-0.5";
+        if (showWrong) return "bg-[#FF6B6B] shadow-[2px_2px_0px_#383838] translate-x-0.5 translate-y-0.5";
+        if (locked) return "bg-white opacity-50 shadow-[4px_4px_0px_#383838]";
+        return "bg-white shadow-[4px_4px_0px_#383838] cursor-pointer hover:-translate-y-1 hover:bg-[#FFDE00] hover:shadow-[6px_6px_0px_#383838] active:translate-x-1 active:translate-y-1 active:shadow-none";
+    }
+
+    public void Dispose() => timer?.Dispose();
+}

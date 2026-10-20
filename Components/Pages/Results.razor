@@ -1,0 +1,185 @@
+@page "/results"
+@using MindRush.Models
+
+<PageTitle>MindRush | Challenge complete</PageTitle>
+
+<HeadContent>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet" />
+</HeadContent>
+
+<div class="min-h-screen bg-[#F4EFEA] text-[#383838] font-['DM_Sans',ui-sans-serif,system-ui,sans-serif] antialiased selection:bg-[#FFDE00]">
+
+    @* ============ MINIMAL HEADER ============ *@
+    <header class="border-b-2 border-[#383838] bg-[#F4EFEA]">
+        <div class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+            <a href="/" class="flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">
+                <span class="grid h-10 w-10 place-items-center rounded-xl border-2 border-[#383838] bg-[#FFDE00] shadow-[3px_3px_0px_#383838]">
+                    <BrainBolt Class="h-6 w-6" />
+                </span>
+                <span class="hidden font-['Space_Mono',ui-monospace,monospace] text-2xl font-bold tracking-tight sm:inline">MindRush</span>
+            </a>
+            <p class="rounded-full border-2 border-[#383838] bg-[#7ED957] px-3 py-1.5 font-['Space_Mono',monospace] text-xs font-bold shadow-[3px_3px_0px_#383838] sm:px-4 sm:text-sm">CHALLENGE COMPLETE</p>
+        </div>
+    </header>
+
+    <main class="relative mx-auto max-w-5xl overflow-hidden px-4 pb-16 pt-10 sm:px-6 sm:pb-24 sm:pt-14">
+
+
+        @* ============ CELEBRATION ============ *@
+        <section class="relative text-center" aria-labelledby="results-title">
+            @* confetti *@
+            <div class="pointer-events-none absolute left-[4%] top-8 h-6 w-6 rotate-12 rounded-md border-2 border-[#383838] bg-[#6FC2FF]" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute right-[6%] top-2 h-8 w-8 rounded-full border-2 border-[#383838] bg-[#FF8FB8]" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute left-[14%] top-40 hidden h-5 w-5 rotate-45 border-2 border-[#383838] bg-[#7ED957] sm:block" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute right-[15%] top-44 hidden h-6 w-6 -rotate-12 rounded-md border-2 border-[#383838] bg-[#F9963F] sm:block" aria-hidden="true"></div>
+
+            <svg viewBox="0 0 160 150" class="relative mx-auto h-36 w-36 sm:h-44 sm:w-44" fill="none" stroke="#383838" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+                @* sparkles *@
+                <path d="M20 40l4 9 9 4-9 4-4 9-4-9-9-4 9-4Z" fill="#FFDE00" />
+                <path d="M140 24l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z" fill="#6FC2FF" />
+                <path d="M146 92l3 6 6 3-6 3-3 6-3-6-6-3 6-3Z" fill="#FF8FB8" />
+                @* trophy *@
+                <path d="M46 36H32v10a20 20 0 0 0 18 20" fill="#FFF" />
+                <path d="M114 36h14v10a20 20 0 0 1-18 20" fill="#FFF" />
+                <rect x="72" y="98" width="16" height="22" fill="#F9963F" />
+                <rect x="50" y="120" width="60" height="16" rx="4" fill="#F9963F" />
+                <path d="M44 18h72v38a36 36 0 0 1-72 0Z" fill="#FFDE00" />
+                <path d="M80 30l6 13 14 2-10 10 3 14-13-7-13 7 3-14-10-10 14-2Z" fill="#FFF" />
+            </svg>
+
+            <h1 id="results-title" class="mt-4 font-['Space_Mono',ui-monospace,monospace] text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl">
+                <span class="inline-block -rotate-1 bg-[#FFDE00] px-3">TIME'S UP!</span>
+            </h1>
+            <p class="mx-auto mt-6 max-w-lg text-lg leading-relaxed sm:text-xl">Nice run, <span class="font-bold">@PlayerName</span>! Here's how you did.</p>
+
+            @* achievement badge *@
+            <div class="mt-6 inline-flex items-center gap-2 rounded-full border-2 border-[#383838] @Badge.ColorClass px-5 py-2 font-['Space_Mono',monospace] text-sm font-bold shadow-[4px_4px_0px_#383838] sm:text-base">
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="#FFDE00" stroke="#383838" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8Z" /></svg>
+                @Badge.Title
+            </div>
+        </section>
+
+        @* ============ SCORE CARD ============ *@
+        <section class="relative mt-12 sm:mt-14" aria-labelledby="score-label">
+            @if (IsPersonalBest)
+            {
+                <div class="absolute -top-5 left-1/2 z-10 -translate-x-1/2 -rotate-2 whitespace-nowrap rounded-xl border-2 border-[#383838] bg-[#FFDE00] px-4 py-2 font-['Space_Mono',monospace] text-sm font-bold shadow-[4px_4px_0px_#383838] sm:text-base">
+                    ⭐ NEW PERSONAL BEST!
+                </div>
+            }
+
+            <div class="rounded-3xl border-2 border-[#383838] bg-white px-5 py-10 text-center shadow-[8px_8px_0px_#383838] sm:px-10 sm:py-14">
+                <p id="score-label" class="font-['Space_Mono',monospace] text-sm font-bold sm:text-base">YOUR FINAL SCORE</p>
+
+                <p class="mt-4 flex flex-wrap items-baseline justify-center gap-x-4 font-['Space_Mono',ui-monospace,monospace] font-bold leading-none">
+                    <span class="inline-block rotate-1 bg-[#6FC2FF] px-4 py-2 text-7xl tracking-tight sm:text-9xl">@Points</span>
+                    <span class="text-3xl sm:text-5xl">POINTS</span>
+                </p>
+
+                @if (IsPersonalBest)
+                {
+                    <p class="mx-auto mt-8 inline-block rounded-full border-2 border-[#383838] bg-[#FFDE00] px-5 py-2 font-bold">
+                        @(PreviousBest == 0 ? "Your first score on the board!" : $"That's {Points - PreviousBest} more than your last best of {PreviousBest}.")
+                    </p>
+                }
+                else
+                {
+                    <p class="mx-auto mt-8 inline-block rounded-full border-2 border-[#383838] bg-[#F4EFEA] px-5 py-2 font-bold">
+                        @(PreviousBest == 0 ? "Get a few answers right to put a score on the board." : $"Your best is {PreviousBest}. Just {Math.Max(PreviousBest - Points + GameSettings.PointsPerCorrect, GameSettings.PointsPerCorrect)} more to beat it.")
+                    </p>
+                }
+            </div>
+        </section>
+
+        @* ============ STATS ============ *@
+        <section class="mt-10 grid gap-6 sm:mt-12 md:grid-cols-3" aria-label="Statistics">
+            @foreach (var s in Stats)
+            {
+                <article class="rounded-2xl border-2 border-[#383838] p-5 shadow-[4px_4px_0px_#383838] @s.Bg">
+                    <div class="flex items-center justify-between">
+                        <p class="font-['Space_Mono',monospace] text-sm font-bold">@s.Label</p>
+                        <span class="grid h-10 w-10 place-items-center rounded-lg border-2 border-[#383838] bg-white text-xl" aria-hidden="true">@s.Icon</span>
+                    </div>
+                    <p class="mt-3 font-['Space_Mono',monospace] text-5xl font-bold leading-none sm:text-6xl">@s.Value</p>
+                    @if (s.Bar is not null)
+                    {
+                        <div class="mt-4 h-3 overflow-hidden rounded-full border-2 border-[#383838] bg-white" role="presentation">
+                            <div class="h-full border-r-2 border-[#383838] bg-[#FFDE00]" style="width:@(s.Bar)%"></div>
+                        </div>
+                    }
+                </article>
+            }
+        </section>
+
+        @* ============ ACTIONS ============ *@
+        <section class="mt-12 flex flex-col items-stretch justify-center gap-4 sm:mt-14 md:flex-row md:gap-6" aria-label="What next">
+            <a href="/play" class="@BtnBase bg-[#FFDE00]">PLAY AGAIN</a>
+            <a href="@($"/leaderboard?mine={Points}&player={Uri.EscapeDataString(PlayerName)}")" class="@BtnBase bg-[#6FC2FF]">VIEW LEADERBOARD</a>
+            <a href="/" class="@BtnBase bg-white">BACK TO HOME</a>
+        </section>
+
+        @* ============ CLOSING ============ *@
+        <section class="mt-14 text-center sm:mt-20">
+            <h2 class="font-['Space_Mono',monospace] text-2xl font-bold tracking-tight sm:text-4xl">
+                <span class="inline-block -rotate-1 bg-[#F9963F] px-3">THINK YOU CAN DO BETTER?</span>
+            </h2>
+            <p class="mt-5 text-lg">Your next challenge starts now.</p>
+        </section>
+    </main>
+</div>
+
+@code {
+    private const string BtnBase =
+        "rounded-xl border-2 border-[#383838] px-8 py-4 text-center font-['Space_Mono',monospace] text-base font-bold " +
+        "shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] " +
+        "active:translate-x-1.5 active:translate-y-1.5 active:shadow-none " +
+        "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838] md:flex-1";
+
+    // Values come from the Game page (?score=&correct=&answered=). Defaults are sample values.
+    // Add ?best=false to preview the normal state, ?best=true to force the personal-best state.
+    [SupplyParameterFromQuery(Name = "score")] public int? ScoreParam { get; set; }
+    [SupplyParameterFromQuery(Name = "correct")] public int? CorrectParam { get; set; }
+    [SupplyParameterFromQuery(Name = "answered")] public int? AnsweredParam { get; set; }
+    [SupplyParameterFromQuery(Name = "player")] public string? PlayerParam { get; set; }
+    [SupplyParameterFromQuery(Name = "best")] public bool? BestParam { get; set; }
+
+    private ResultsViewModel vm = default!;
+
+    protected override void OnParametersSet()
+    {
+        var sample = ScoreParam is null;
+        var score = ScoreParam ?? 240;
+        var correct = CorrectParam ?? (sample ? 24 : score / GameSettings.PointsPerCorrect);
+        var answered = Math.Max(AnsweredParam ?? (sample ? 30 : correct), correct);
+
+        var session = new GameSession
+        {
+            Player = new Player { Id = SampleData.CurrentPlayerId, DisplayName = string.IsNullOrWhiteSpace(PlayerParam) ? "Player" : PlayerParam },
+            Score = score,
+            CorrectCount = correct,
+            AnsweredCount = answered,
+            DurationSeconds = GameSettings.RoundSeconds,
+        };
+
+        vm = ResultsViewModel.From(session, SampleData.SamplePreviousBest);
+    }
+
+    private int Points => vm.Score;
+    private int Correct => vm.CorrectCount;
+    private int Answered => vm.AnsweredCount;
+    private int Accuracy => vm.Accuracy;
+    private int PreviousBest => vm.PreviousBest;
+    private bool IsPersonalBest => BestParam ?? vm.IsPersonalBest;
+    private string PlayerName => vm.PlayerName;
+    private Achievement Badge => vm.Badge;
+
+    private record Stat(string Label, string Value, string Icon, string Bg, int? Bar = null);
+    private IEnumerable<Stat> Stats => new[]
+    {
+        new Stat("CORRECT ANSWERS", Correct.ToString(), "✅", "bg-[#7ED957]"),
+        new Stat("QUESTIONS ANSWERED", Answered.ToString(), "❓", "bg-[#6FC2FF]"),
+        new Stat("ACCURACY", $"{Accuracy}%", "🎯", "bg-[#FF8FB8]", Accuracy),
+    };
+}

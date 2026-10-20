@@ -1,0 +1,230 @@
+@page "/leaderboard"
+@using MindRush.Models
+
+<PageTitle>MindRush | Leaderboard</PageTitle>
+
+<HeadContent>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet" />
+</HeadContent>
+
+<div class="min-h-screen bg-[#F4EFEA] text-[#383838] font-['DM_Sans',ui-sans-serif,system-ui,sans-serif] antialiased selection:bg-[#FFDE00]">
+
+    @* ============ HEADER ============ *@
+    <header class="sticky top-0 z-40 border-b-2 border-[#383838] bg-[#F4EFEA]/95 backdrop-blur">
+        <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+            <a href="/" class="group flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">
+                <span class="grid h-10 w-10 place-items-center rounded-xl border-2 border-[#383838] bg-[#FFDE00] shadow-[3px_3px_0px_#383838] transition group-hover:-rotate-6">
+                    <BrainBolt Class="h-6 w-6" />
+                </span>
+                <span class="hidden font-['Space_Mono',ui-monospace,monospace] text-2xl font-bold tracking-tight sm:inline">MindRush</span>
+            </a>
+
+            <nav class="flex items-center gap-2 sm:gap-6" aria-label="Main">
+                <a href="/" class="rounded-lg px-2 py-1.5 text-sm font-medium underline-offset-8 decoration-4 decoration-[#6FC2FF] hover:underline focus-visible:underline sm:px-3 sm:text-base">HOME</a>
+                <a href="/leaderboard" aria-current="page" class="rounded-lg border-2 border-[#383838] bg-[#FFDE00] px-2 py-1 text-sm font-bold shadow-[3px_3px_0px_#383838] sm:px-3 sm:text-base">LEADERBOARD</a>
+                <a href="/play" class="@BtnSmall bg-[#6FC2FF]">PLAY NOW</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="relative mx-auto max-w-5xl px-4 pb-8 pt-10 sm:px-6 sm:pt-14">
+
+        @* ============ TITLE ============ *@
+        <section class="relative text-center" aria-labelledby="lb-title">
+            <div class="pointer-events-none absolute left-[3%] top-6 h-6 w-6 rotate-12 rounded-md border-2 border-[#383838] bg-[#6FC2FF]" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute right-[5%] top-0 h-8 w-8 rounded-full border-2 border-[#383838] bg-[#FF8FB8]" aria-hidden="true"></div>
+
+            <TrophyIcon Class="mx-auto h-24 w-24 sm:h-28 sm:w-28" />
+            <h1 id="lb-title" class="mt-3 font-['Space_Mono',ui-monospace,monospace] text-3xl font-bold leading-[1.1] tracking-tight sm:text-6xl">
+                <span class="inline-block -rotate-1 bg-[#FFDE00] px-3">HALL OF</span><br />
+                <span class="mt-2 inline-block rotate-1 bg-[#6FC2FF] px-3">BRAINPOWER</span>
+            </h1>
+            <p class="mx-auto mt-6 max-w-lg text-lg leading-relaxed sm:text-xl">The fastest minds rise to the top. Can you beat them?</p>
+        </section>
+
+        @if (Board.Count == 0)
+        {
+            @* ============ EMPTY LEADERBOARD ============ *@
+            <section class="mt-12 rounded-3xl border-2 border-[#383838] bg-white px-6 py-12 text-center shadow-[8px_8px_0px_#383838] sm:py-16" aria-labelledby="empty-title">
+                <div class="mx-auto grid h-24 w-24 place-items-center rounded-3xl border-2 border-[#383838] bg-[#FF8FB8] text-6xl -rotate-3" aria-hidden="true">🏆</div>
+                <h2 id="empty-title" class="mt-6 font-['Space_Mono',monospace] text-2xl font-bold tracking-tight sm:text-4xl">NO CHAMPIONS YET.<br />BE THE FIRST!</h2>
+                <p class="mx-auto mt-4 max-w-md text-lg">The board is wide open. One minute is all it takes to claim the top spot.</p>
+                <a href="/play" class="@BtnBase mt-8 inline-block bg-[#FFDE00]">PLAY NOW</a>
+            </section>
+        }
+        else
+        {
+            @* ============ PODIUM ============ *@
+            <section class="mt-14 grid items-end gap-6 md:grid-cols-3 md:gap-6" aria-label="Top three players">
+                @foreach (var (p, i) in Board.Take(3).Select((p, i) => (p, i)))
+                {
+                    var t = Podium[i];
+                    <article class="relative rounded-2xl border-2 border-[#383838] bg-white px-5 text-center shadow-[6px_6px_0px_#383838] @t.Order @t.Pad">
+                        <span class="absolute -top-4 left-1/2 -translate-x-1/2 rounded-lg border-2 border-[#383838] px-3 py-0.5 font-['Space_Mono',monospace] text-sm font-bold shadow-[2px_2px_0px_#383838] @t.Accent">#@p.Rank</span>
+                        @if (i == 0)
+                        {
+                            <div class="-mb-1 text-3xl" aria-hidden="true">👑</div>
+                        }
+                        <div class="mt-2 flex justify-center">
+                            <Avatar Name="@p.DisplayName" Class="@($"{(i == 0 ? "h-20 w-20 text-4xl" : "h-16 w-16 text-3xl")} {t.Accent}")" />
+                        </div>
+                        <h2 class="mt-3 font-['Space_Mono',monospace] text-xl font-bold sm:text-2xl">@p.DisplayName</h2>
+                        <p class="mt-1 inline-block rounded-md px-2 py-0.5 font-bold @t.Accent"><span class="font-['Space_Mono',monospace]">@p.BestScore</span> points</p>
+                    </article>
+                }
+            </section>
+
+            @* ============ RANKING + YOUR BEST RUN ============ *@
+            <div class="mt-12 grid gap-8 lg:grid-cols-[1fr_20rem] lg:items-start">
+
+                <section aria-labelledby="top-players">
+                    <h2 id="top-players" class="font-['Space_Mono',monospace] text-2xl font-bold tracking-tight sm:text-3xl">TOP PLAYERS</h2>
+
+                    <div class="mt-5 md:overflow-hidden md:rounded-2xl md:border-2 md:border-[#383838] md:bg-white md:shadow-[6px_6px_0px_#383838]" role="table" aria-labelledby="top-players">
+                        <div role="rowgroup" class="hidden md:block">
+                            <div role="row" class="grid grid-cols-[5rem_1fr_9rem] items-center border-b-2 border-[#383838] bg-[#6FC2FF] px-5 py-3 font-['Space_Mono',monospace] text-sm font-bold">
+                                <span role="columnheader">RANK</span>
+                                <span role="columnheader">PLAYER</span>
+                                <span role="columnheader" class="text-right">BEST SCORE</span>
+                            </div>
+                        </div>
+
+                        <div role="rowgroup">
+                            @foreach (var (p, i) in Board.Select((p, i) => (p, i)))
+                            {
+                                <div role="row"
+                                     class="mb-3 grid grid-cols-[3.25rem_1fr_auto] items-center gap-x-3 rounded-xl border-2 border-[#383838] px-4 py-3 shadow-[3px_3px_0px_#383838] md:mb-0 md:grid-cols-[5rem_1fr_9rem] md:rounded-none md:border-0 md:border-b md:px-5 md:shadow-none md:last:border-b-0 md:border-[#383838]/20 @(IsMe(p) ? "bg-[#FFDE00]" : "bg-white")">
+                                    <span role="cell">
+                                        <span class="inline-grid h-9 min-w-9 place-items-center rounded-lg border-2 border-[#383838] px-1 font-['Space_Mono',monospace] text-sm font-bold @RankBg(p.Rank - 1)">@p.Rank</span>
+                                    </span>
+                                    <span role="cell" class="flex min-w-0 items-center gap-3">
+                                        <Avatar Name="@p.DisplayName" Class="@($"h-9 w-9 text-sm {AvatarBg(i)}")" />
+                                        <span class="truncate font-bold">@p.DisplayName</span>
+                                        @if (IsMe(p))
+                                        {
+                                            <span class="rounded-md border-2 border-[#383838] bg-white px-1.5 text-xs font-bold">YOU</span>
+                                        }
+                                    </span>
+                                    <span role="cell" class="text-right font-['Space_Mono',monospace] text-lg font-bold">@p.BestScore<span class="ml-1 text-xs font-bold text-[#383838]/70 md:hidden">pts</span></span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </section>
+
+                <div class="lg:sticky lg:top-24">
+                    <BestRunCard Score="MyScore" Rank="MyRank" />
+                </div>
+            </div>
+        }
+
+        @if (Board.Count == 0)
+        {
+            <div class="mt-10 mx-auto max-w-md"><BestRunCard Score="MyScore" Rank="MyRank" /></div>
+        }
+
+        @* ============ FINAL CTA ============ *@
+        <section class="mt-16 sm:mt-24">
+            <div class="relative overflow-hidden rounded-3xl border-2 border-[#383838] bg-[#FFDE00] px-6 py-12 text-center shadow-[8px_8px_0px_#383838] sm:px-12 sm:py-16">
+                <div class="pointer-events-none absolute -left-8 -top-8 h-28 w-28 rounded-full border-2 border-[#383838] bg-[#FF8FB8]" aria-hidden="true"></div>
+                <div class="pointer-events-none absolute -bottom-10 -right-6 h-32 w-32 rotate-12 rounded-3xl border-2 border-[#383838] bg-[#6FC2FF]" aria-hidden="true"></div>
+                <div class="relative">
+                    <h2 class="font-['Space_Mono',monospace] text-3xl font-bold leading-tight tracking-tight sm:text-5xl">READY FOR ANOTHER<br class="hidden sm:block" /> CHALLENGE?</h2>
+                    <a href="/play" class="mt-8 inline-block rounded-xl border-2 border-[#383838] bg-[#383838] px-10 py-5 font-['Space_Mono',monospace] text-lg font-bold text-[#FFDE00] shadow-[6px_6px_0px_#F9963F] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#F9963F] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">CHALLENGE YOURSELF</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    @* ============ FOOTER ============ *@
+    <footer class="mt-16 border-t-2 border-[#383838] bg-white">
+        <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 py-10 sm:px-6 md:flex-row lg:px-8">
+            <a href="/" class="flex items-center gap-2.5">
+                <span class="grid h-9 w-9 place-items-center rounded-lg border-2 border-[#383838] bg-[#6FC2FF]"><BrainBolt Class="h-5 w-5" /></span>
+                <span class="font-['Space_Mono',monospace] text-xl font-bold">MindRush</span>
+            </a>
+            <nav aria-label="Footer">
+                <ul class="flex flex-wrap justify-center gap-x-8 gap-y-2 font-medium">
+                    <li><a href="/" class="underline-offset-4 decoration-2 decoration-[#F9963F] hover:underline">Home</a></li>
+                    <li><a href="/#how-to-play" class="underline-offset-4 decoration-2 decoration-[#F9963F] hover:underline">How to Play</a></li>
+                    <li><a href="/leaderboard" class="underline-offset-4 decoration-2 decoration-[#F9963F] hover:underline">Leaderboard</a></li>
+                    <li><a href="/play" class="underline-offset-4 decoration-2 decoration-[#F9963F] hover:underline">Play now</a></li>
+                </ul>
+            </nav>
+            <p class="text-sm text-[#383838]/70">© @DateTime.Now.Year MindRush. Made for curious brains.</p>
+        </div>
+    </footer>
+</div>
+
+@code {
+    // ---------- Shared button styles (same recipe as the other pages) ----------
+    private const string BtnBase =
+        "rounded-xl border-2 border-[#383838] px-8 py-4 text-center font-['Space_Mono',monospace] text-base font-bold " +
+        "shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] " +
+        "active:translate-x-1.5 active:translate-y-1.5 active:shadow-none " +
+        "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]";
+
+    private const string BtnSmall =
+        "rounded-xl border-2 border-[#383838] px-3 py-2 font-['Space_Mono',monospace] text-xs font-bold shadow-[4px_4px_0px_#383838] " +
+        "transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_#383838] active:translate-x-1 active:translate-y-1 active:shadow-none " +
+        "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838] sm:px-5 sm:py-2.5 sm:text-sm";
+
+    // ---------- Query parameters (state previews) ----------
+    // /leaderboard                  -> normal state, sample player with 240 points
+    // /leaderboard?mine=none        -> "Your best run" empty state
+    // /leaderboard?empty=true       -> empty leaderboard state
+    // /leaderboard?mine=300&player=Sam -> your own score and name (the Results page links here)
+    [SupplyParameterFromQuery(Name = "mine")] public string? MineParam { get; set; }
+    [SupplyParameterFromQuery(Name = "player")] public string? PlayerParam { get; set; }
+    [SupplyParameterFromQuery(Name = "empty")] public bool? EmptyParam { get; set; }
+
+    private List<LeaderboardEntry> Board = new();
+    private PlayerStanding? standing;
+
+    private int? MyScore => standing?.BestScore;
+    private int? MyRank => standing?.Rank;
+
+    private bool IsMe(LeaderboardEntry e) => e.PlayerId == SampleData.CurrentPlayerId;
+
+    protected override void OnParametersSet()
+    {
+        int? myBest = EmptyParam == true ? null
+            : MineParam is null ? 240
+            : int.TryParse(MineParam, out var v) ? v : null;
+
+        if (EmptyParam == true)
+        {
+            Board = new();
+            standing = null;
+            return;
+        }
+
+        GameSession? mine = myBest is int s
+            ? new GameSession
+            {
+                PlayerId = SampleData.CurrentPlayerId,
+                Score = s,
+                Player = new Player { Id = SampleData.CurrentPlayerId, DisplayName = string.IsNullOrWhiteSpace(PlayerParam) ? "You" : PlayerParam },
+            }
+            : null;
+
+        Board = SampleData.GetLeaderboard(GameSettings.LeaderboardSize, mine);
+        standing = SampleData.GetStanding(myBest);
+    }
+
+    // ---------- Podium styling: yellow, gray, orange ----------
+    private record PodiumStyle(string Accent, string Order, string Pad);
+    private static readonly PodiumStyle[] Podium =
+    {
+        new("bg-[#FFDE00]", "md:order-2", "pb-8 pt-8 md:pb-12 md:pt-10"),
+        new("bg-[#D9D6D2]", "md:order-1", "pb-6 pt-8"),
+        new("bg-[#F9963F]", "md:order-3", "pb-6 pt-8"),
+    };
+
+    private static string RankBg(int i) => i switch { 0 => "bg-[#FFDE00]", 1 => "bg-[#D9D6D2]", 2 => "bg-[#F9963F]", _ => "bg-white" };
+
+    private static readonly string[] AvatarPalette = { "bg-[#6FC2FF]", "bg-[#FF8FB8]", "bg-[#7ED957]", "bg-[#F9963F]", "bg-[#FFDE00]" };
+    private static string AvatarBg(int i) => AvatarPalette[i % AvatarPalette.Length];
+}

@@ -1,0 +1,11 @@
+<span class="grid shrink-0 place-items-center rounded-full border-2 border-[#383838] font-['Space_Mono',monospace] font-bold @Class" aria-hidden="true">@Initial</span>
+
+@code {
+    /// <summary>Player name; the first letter becomes the initial.</summary>
+    [Parameter, EditorRequired] public string Name { get; set; } = "?";
+
+    /// <summary>Size and colour utilities, e.g. "h-10 w-10 text-base bg-[#6FC2FF]".</summary>
+    [Parameter] public string Class { get; set; } = "h-10 w-10 text-base bg-[#6FC2FF]";
+
+    private string Initial => string.IsNullOrWhiteSpace(Name) ? "?" : Name.Trim()[..1].ToUpperInvariant();
+}
