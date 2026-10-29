@@ -137,8 +137,6 @@
         "active:translate-x-1.5 active:translate-y-1.5 active:shadow-none " +
         "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838] md:flex-1";
 
-    // Values come from the Game page (?score=&correct=&answered=). Defaults are sample values.
-    // Add ?best=false to preview the normal state, ?best=true to force the personal-best state.
     [SupplyParameterFromQuery(Name = "score")] public int? ScoreParam { get; set; }
     [SupplyParameterFromQuery(Name = "correct")] public int? CorrectParam { get; set; }
     [SupplyParameterFromQuery(Name = "answered")] public int? AnsweredParam { get; set; }

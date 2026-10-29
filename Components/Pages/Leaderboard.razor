@@ -23,7 +23,7 @@
 
             <nav class="flex items-center gap-2 sm:gap-6" aria-label="Main">
                 <a href="/" class="rounded-lg px-2 py-1.5 text-sm font-medium underline-offset-8 decoration-4 decoration-[#6FC2FF] hover:underline focus-visible:underline sm:px-3 sm:text-base">HOME</a>
-                <a href="/leaderboard" aria-current="page" class="rounded-lg border-2 border-[#383838] bg-[#FFDE00] px-2 py-1 text-sm font-bold shadow-[3px_3px_0px_#383838] sm:px-3 sm:text-base">LEADERBOARD</a>
+                <a href="/leaderboard" aria-current="page" class="rounded-lg px-2 py-1.5 text-sm font-medium underline-offset-8 decoration-4 decoration-[#6FC2FF] hover:underline focus-visible:underline sm:px-3 sm:text-base">LEADERBOARD</a>
                 <a href="/play" class="@BtnSmall bg-[#6FC2FF]">PLAY NOW</a>
             </nav>
         </div>
@@ -171,11 +171,6 @@
         "transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_#383838] active:translate-x-1 active:translate-y-1 active:shadow-none " +
         "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838] sm:px-5 sm:py-2.5 sm:text-sm";
 
-    // ---------- Query parameters (state previews) ----------
-    // /leaderboard                  -> normal state, sample player with 240 points
-    // /leaderboard?mine=none        -> "Your best run" empty state
-    // /leaderboard?empty=true       -> empty leaderboard state
-    // /leaderboard?mine=300&player=Sam -> your own score and name (the Results page links here)
     [SupplyParameterFromQuery(Name = "mine")] public string? MineParam { get; set; }
     [SupplyParameterFromQuery(Name = "player")] public string? PlayerParam { get; set; }
     [SupplyParameterFromQuery(Name = "empty")] public bool? EmptyParam { get; set; }

@@ -271,7 +271,6 @@ else
     private bool started;
     private int? selectedCategoryId;
 
-    // Set by the home page link, e.g. /play?category=3
     [SupplyParameterFromQuery(Name = "category")]
     public int? CategoryId { get; set; }
 
@@ -374,7 +373,6 @@ else
 
     private void ExitGame() => Nav.NavigateTo("/");
 
-    // No storage yet, so the round is handed to the Results page through the URL.
     private void ViewResults() =>
         Nav.NavigateTo($"/results?score={score}&correct={correctCount}&answered={answeredCount}");
 
