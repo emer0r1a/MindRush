@@ -27,3 +27,4 @@ Z:\L23Y16W36\Midterm\MidtermExam\obj\Debug\net8.0\refint\MidtermExam.dll
 Z:\L23Y16W36\Midterm\MidtermExam\obj\Debug\net8.0\MidtermExam.pdb
 Z:\L23Y16W36\Midterm\MidtermExam\obj\Debug\net8.0\MidtermExam.genruntimeconfig.cache
 Z:\L23Y16W36\Midterm\MidtermExam\obj\Debug\net8.0\ref\MidtermExam.dll
+Z:\L23Y16W36\Midterm\MidtermExam\obj\Debug\net8.0\MidtermExam.sourcelink.json
