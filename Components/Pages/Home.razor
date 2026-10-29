@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet" />
 </HeadContent>
 
-<div class="min-h-screen bg-[#F4EFEA] text-[#383838] font-['DM_Sans',ui-sans-serif,system-ui,sans-serif] antialiased seylection:bg-[#FFDE00]">
+<div id="top" class="shrink-0 min-h-screen bg-[#F4EFEA] text-[#383838] font-['DM_Sans',ui-sans-serif,system-ui,sans-serif] antialiased selection:bg-[#FFDE00]">
 
     @* ============ HEADER ============ *@
     <header class="sticky top-0 z-50 border-b-2 border-[#383838] bg-[#F4EFEA]/95 backdrop-blur">
@@ -28,7 +28,7 @@
                 {
                     <a href="@href" class="font-medium uppercase tracking-wide underline-offset-8 decoration-4 decoration-[#6FC2FF] hover:underline focus-visible:underline">@label</a>
                 }
-                <a href="/play" class="rounded-xl border-2 border-[#383838] bg-[#6FC2FF] px-5 py-2.5 font-['Space_Mono',monospace] text-sm font-bold uppercase tracking-wide shadow-[4px_4px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_#383838] active:translate-x-1 active:translate-y-1 active:shadow-none">PLAY NOW</a>
+                <a href="@PlayHref" class="rounded-xl border-2 border-[#383838] bg-[#6FC2FF] px-5 py-2.5 font-['Space_Mono',monospace] text-sm font-bold uppercase tracking-wide shadow-[4px_4px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_#383838] active:translate-x-1 active:translate-y-1 active:shadow-none">PLAY NOW</a>
             </nav>
 
             <button type="button" class="grid h-11 w-11 place-items-center rounded-xl border-2 border-[#383838] bg-white shadow-[3px_3px_0px_#383838] md:hidden"
@@ -54,7 +54,7 @@
                     {
                         <li><a href="@href" class="block rounded-lg border-2 border-[#383838] bg-white px-4 py-3 font-bold" @onclick="() => menuOpen = false">@label</a></li>
                     }
-                    <li><a href="/play" class="block rounded-lg border-2 border-[#383838] bg-[#6FC2FF] px-4 py-3 text-center font-['Space_Mono',monospace] font-bold shadow-[4px_4px_0px_#383838]">PLAY NOW</a></li>
+                    <li><a href="@PlayHref" class="block rounded-lg border-2 border-[#383838] bg-[#6FC2FF] px-4 py-3 text-center font-['Space_Mono',monospace] font-bold shadow-[4px_4px_0px_#383838]">PLAY NOW</a></li>
                 </ul>
             </nav>
         }
@@ -85,7 +85,7 @@
                     </p>
 
                     <div class="mt-9 flex flex-col gap-4 sm:flex-row">
-                        <a href="/play" class="rounded-xl border-2 border-[#383838] bg-[#FFDE00] px-8 py-4 text-center font-['Space_Mono',monospace] text-base font-bold shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">START PLAYING</a>
+                        <a href="@PlayHref" class="rounded-xl border-2 border-[#383838] bg-[#FFDE00] px-8 py-4 text-center font-['Space_Mono',monospace] text-base font-bold shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">START PLAYING</a>
                         <a href="#how-to-play" class="rounded-xl border-2 border-[#383838] bg-white px-8 py-4 text-center font-['Space_Mono',monospace] text-base font-bold shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">HOW TO PLAY</a>
                     </div>
                 </div>
@@ -220,7 +220,7 @@
                 <div class="relative">
                     <h2 class="font-['Space_Mono',monospace] text-3xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">READY TO TEST<br class="hidden sm:block" /> YOUR BRAIN?</h2>
                     <p class="mx-auto mt-5 max-w-md text-lg">One minute is all it takes to find out. The clock starts when you do.</p>
-                    <a href="/play" class="mt-9 inline-block rounded-xl border-2 border-[#383838] bg-[#383838] px-10 py-5 font-['Space_Mono',monospace] text-lg font-bold text-[#FFDE00] shadow-[6px_6px_0px_#F9963F] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#F9963F] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">PLAY NOW</a>
+                    <a href="@PlayHref" class="mt-9 inline-block rounded-xl border-2 border-[#383838] bg-[#383838] px-10 py-5 font-['Space_Mono',monospace] text-lg font-bold text-[#FFDE00] shadow-[6px_6px_0px_#F9963F] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#F9963F] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">PLAY NOW</a>
                 </div>
             </div>
         </section>
@@ -239,7 +239,7 @@
                     {
                         <li><a href="@href" class="underline-offset-4 decoration-2 decoration-[#F9963F] hover:underline">@label</a></li>
                     }
-                    <li><a href="/play" class="underline-offset-4 decoration-2 decoration-[#F9963F] hover:underline">PLAY NOW</a></li>
+                    <li><a href="@PlayHref" class="underline-offset-4 decoration-2 decoration-[#F9963F] hover:underline">PLAY NOW</a></li>
                 </ul>
             </nav>
             <p class="text-sm text-[#383838]/70">© @DateTime.Now.Year MindRush. Made for curious brains.</p>
@@ -262,7 +262,7 @@
     // ---------- Data ----------
     private static readonly (string Label, string Href)[] NavLinks =
     {
-        ("HOME", "/"),
+        ("HOME", "/#top"),
         ("HOW TO PLAY", "#how-to-play"),
         ("LEADERBOARD", "/leaderboard"),
     };
@@ -285,6 +285,15 @@
     };
 
     private IReadOnlyList<Category> categories = SampleData.Categories;
+
+    private string PlayHref
+    {
+        get
+        {
+            var id = categories.FirstOrDefault(c => c.Name == activeCategory)?.Id;
+            return id is null ? "/play" : $"/play?category={id}";
+        }
+    }
 
     private record Step(string Icon, string Title, string Text, string Bg);
     private static readonly Step[] Steps =

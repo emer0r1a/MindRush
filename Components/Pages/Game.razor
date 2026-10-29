@@ -12,10 +12,66 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet" />
 </HeadContent>
 
-@if (questions.Count == 0)
+@if (!started)
+{
+    <div class="min-h-screen bg-[#F4EFEA] text-[#383838] font-['DM_Sans',ui-sans-serif,system-ui,sans-serif] antialiased selection:bg-[#FFDE00]">
+        <header class="border-b-2 border-[#383838] bg-[#F4EFEA]">
+            <div class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+                <a href="/" class="flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">
+                    <span class="grid h-10 w-10 place-items-center rounded-xl border-2 border-[#383838] bg-[#FFDE00] shadow-[3px_3px_0px_#383838]">
+                        <BrainBolt Class="h-6 w-6" />
+                    </span>
+                    <span class="hidden font-['Space_Mono',ui-monospace,monospace] text-2xl font-bold tracking-tight sm:inline">MindRush</span>
+                </a>
+                <a href="/" class="rounded-xl border-2 border-[#383838] bg-white px-4 py-2 font-['Space_Mono',monospace] text-sm font-bold shadow-[4px_4px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:bg-[#FF8FB8] hover:shadow-[2px_2px_0px_#383838] active:translate-x-1 active:translate-y-1 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">BACK</a>
+            </div>
+        </header>
+
+        <main class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
+            <div class="max-w-2xl">
+                <h1 class="font-['Space_Mono',monospace] text-3xl font-bold tracking-tight sm:text-5xl">Pick your battlefield</h1>
+                <p class="mt-4 text-lg">Choose a topic, then the @GameSettings.RoundSeconds-second clock starts. Or mix it all up.</p>
+            </div>
+
+            <ul class="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
+                @foreach (var c in SampleData.Categories)
+                {
+                    var isActive = selectedCategoryId == c.Id;
+                    <li>
+                        <button type="button" aria-pressed="@isActive"
+                                @onclick="() => selectedCategoryId = c.Id"
+                                class="group flex w-full flex-col items-start gap-3 rounded-2xl border-2 border-[#383838] p-4 text-left transition hover:-translate-y-1 hover:-rotate-1 hover:shadow-[6px_6px_0px_#383838] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838] sm:flex-row sm:items-center sm:gap-4 sm:p-5 @c.ColorClass @(isActive ? "translate-x-0.5 translate-y-0.5 shadow-[2px_2px_0px_#383838] ring-4 ring-[#383838]" : "shadow-[4px_4px_0px_#383838]")">
+                            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-xl border-2 border-[#383838] bg-white text-3xl transition group-hover:rotate-12" aria-hidden="true">@c.Icon</span>
+                            <span>
+                                <span class="block font-['Space_Mono',monospace] text-base font-bold leading-tight sm:text-lg">@c.Name</span>
+                                <span class="mt-0.5 block text-sm">@(isActive ? "Locked in!" : c.Blurb)</span>
+                            </span>
+                        </button>
+                    </li>
+                }
+            </ul>
+
+            <div class="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
+                <button type="button" @onclick="StartGame"
+                        class="rounded-xl border-2 border-[#383838] bg-[#FFDE00] px-8 py-4 text-center font-['Space_Mono',monospace] text-base font-bold shadow-[6px_6px_0px_#383838] transition hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_#383838] active:translate-x-1.5 active:translate-y-1.5 active:shadow-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#383838]">
+                    @(selectedCategoryId is null ? "START WITH ALL CATEGORIES" : $"START {SelectedCategoryName.ToUpperInvariant()}")
+                </button>
+                @if (selectedCategoryId is not null)
+                {
+                    <button type="button" @onclick="() => selectedCategoryId = null"
+                            class="font-bold underline decoration-[#6FC2FF] decoration-4 underline-offset-4">Clear selection</button>
+                }
+            </div>
+        </main>
+    </div>
+}
+else if (questions.Count == 0)
 {
     <div class="grid min-h-screen place-items-center bg-[#F4EFEA] px-4 text-center font-['Space_Mono',monospace] text-xl font-bold text-[#383838]">
-        No questions found.
+        <div>
+            No questions found.
+            <button type="button" @onclick="BackToPicker" class="mt-6 block w-full rounded-xl border-2 border-[#383838] bg-[#FFDE00] px-6 py-3 text-base shadow-[4px_4px_0px_#383838]">PICK ANOTHER CATEGORY</button>
+        </div>
     </div>
 }
 else
@@ -212,22 +268,27 @@ else
     private bool focusModal;
     private Timer? timer;
     private ElementReference primaryBtn;
+    private bool started;
+    private int? selectedCategoryId;
+
+    // Set by the home page link, e.g. /play?category=3
+    [SupplyParameterFromQuery(Name = "category")]
+    public int? CategoryId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (CategoryId is int id && SampleData.Categories.Any(c => c.Id == id))
+            selectedCategoryId = id;
+    }
+
+    private string SelectedCategoryName =>
+        SampleData.Categories.FirstOrDefault(c => c.Id == selectedCategoryId)?.Name ?? "";
 
     private Question Current => questions[qIndex % questions.Count];
 
     // ---------- Lifecycle ----------
-    protected override void OnInitialized()
-    {
-        questions = SampleData.GetRandomQuestions(GameSettings.QuestionsPerRound);
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && questions.Count > 0)
-        {
-            timer = new Timer(_ => { _ = InvokeAsync(Tick); }, null, 1000, 1000);
-        }
-
         if (focusModal)
         {
             focusModal = false;
@@ -251,6 +312,27 @@ else
     }
 
     // ---------- Actions ----------
+    private void StartGame()
+    {
+        timer?.Dispose();
+        questions = SampleData.GetRandomQuestions(GameSettings.QuestionsPerRound, selectedCategoryId);
+        qIndex = 0;
+        seconds = GameSettings.RoundSeconds;
+        score = correctCount = answeredCount = 0;
+        picked = null;
+        locked = paused = exitOpen = timeUp = false;
+        started = true;
+
+        if (questions.Count > 0)
+            timer = new Timer(_ => { _ = InvokeAsync(Tick); }, null, 1000, 1000);
+    }
+
+    private void BackToPicker()
+    {
+        timer?.Dispose();
+        started = false;
+    }
+
     private async Task Pick(int index)
     {
         if (locked || paused || timeUp) return;
