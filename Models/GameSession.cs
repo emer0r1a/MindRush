@@ -1,21 +1,35 @@
+using Supabase.Postgrest.Attributes;
+using Supabase.Postgrest.Models;
 
 namespace MindRush.Models;
 
-/// One finished 60-second round. Saved by the Game page, read by Results and Leaderboard.
-public class GameSession
+[Table("game_sessions")]
+public class GameSession : BaseModel
 {
-    public int Id { get; set; }
+    [PrimaryKey("id", false)]
+    public long Id { get; set; }
 
-    public int PlayerId { get; set; }
-    public Player? Player { get; set; }
+    [Column("player_name")]
+    public string PlayerName { get; set; } = "";
 
-    public DateTimeOffset StartedAt { get; set; } = DateTimeOffset.UtcNow;
+    [Column("category_name")]
+    public string? CategoryName { get; set; }
 
+    [Column("score")]
     public int Score { get; set; }
-    public int CorrectCount { get; set; }
-    public int AnsweredCount { get; set; }
-    public int DurationSeconds { get; set; }
 
-    /// Accuracy as a whole percentage (0 to 100).
-    public int Accuracy => AnsweredCount == 0 ? 0 : (int)Math.Round(CorrectCount * 100.0 / AnsweredCount);
+    [Column("correct_count")]
+    public int CorrectCount { get; set; }
+
+    [Column("answered_count")]
+    public int AnsweredCount { get; set; }
+
+    [Column("duration_seconds")]
+    public int DurationSeconds { get; set; } = 60;
+
+    [Column("deleted_at")]
+    public DateTime? DeletedAt { get; set; }
+
+    [Column("created_at", ignoreOnInsert: true, ignoreOnUpdate: true)]
+    public DateTime? CreatedAt { get; set; }
 }

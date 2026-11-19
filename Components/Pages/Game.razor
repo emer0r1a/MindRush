@@ -1,8 +1,8 @@
 @page "/play"
-@rendermode @(new InteractiveServerRenderMode(prerender: false))
 @implements IDisposable
 @using MindRush.Models
 @inject NavigationManager Nav
+@inject Supabase.Client Db
 
 <PageTitle>MindRush | Game on!</PageTitle>
 
@@ -50,6 +50,10 @@
                     </li>
                 }
             </ul>
+
+            <input @bind="playerName" maxlength="@GameSettings.MaxDisplayNameLength"
+            placeholder="Your name"
+            class="rounded-xl border-2 border-[#383838] px-4 py-2 font-bold" />
 
             <div class="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
                 <button type="button" @onclick="StartGame"
@@ -270,6 +274,9 @@ else
     private ElementReference primaryBtn;
     private bool started;
     private int? selectedCategoryId;
+    private string playerName = "";
+    private string? saveError;
+    private bool saving;
 
     [SupplyParameterFromQuery(Name = "category")]
     public int? CategoryId { get; set; }
@@ -373,8 +380,38 @@ else
 
     private void ExitGame() => Nav.NavigateTo("/");
 
-    private void ViewResults() =>
-        Nav.NavigateTo($"/results?score={score}&correct={correctCount}&answered={answeredCount}");
+    private async Task ViewResults()
+    {
+        if (saving) return;
+        saving = true;
+        saveError = null;
+
+        var name = string.IsNullOrWhiteSpace(playerName) ? "Player" : playerName.Trim();
+
+        try
+        {
+            await Db.From<GameSession>().Insert(new GameSession
+            {
+                PlayerName = name,
+                CategoryName = string.IsNullOrEmpty(SelectedCategoryName) ? null : SelectedCategoryName,
+                Score = score,
+                CorrectCount = correctCount,
+                AnsweredCount = answeredCount,
+                DurationSeconds = GameSettings.RoundSeconds
+            });
+        }
+        catch (Exception ex)
+        {
+            saveError = ex.Message;
+            Console.WriteLine("Save failed: " + ex);   // shows in the browser console
+        }
+        finally
+        {
+            saving = false;
+        }
+
+        Nav.NavigateTo($"/results?score={score}&correct={correctCount}&answered={answeredCount}&player={Uri.EscapeDataString(name)}");
+    }
 
     private string AnswerClass(bool showCorrect, bool showWrong)
     {

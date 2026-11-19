@@ -1,5 +1,7 @@
 @page "/leaderboard"
 @using MindRush.Models
+@inject Supabase.Client Db
+@using static Supabase.Postgrest.Constants
 
 <PageTitle>MindRush | Leaderboard</PageTitle>
 
@@ -181,14 +183,11 @@
     private int? MyScore => standing?.BestScore;
     private int? MyRank => standing?.Rank;
 
-    private bool IsMe(LeaderboardEntry e) => e.PlayerId == SampleData.CurrentPlayerId;
+    private bool IsMe(LeaderboardEntry e) =>
+    !string.IsNullOrWhiteSpace(PlayerParam) && e.DisplayName == PlayerParam;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
-        int? myBest = EmptyParam == true ? null
-            : MineParam is null ? 240
-            : int.TryParse(MineParam, out var v) ? v : null;
-
         if (EmptyParam == true)
         {
             Board = new();
@@ -196,17 +195,37 @@
             return;
         }
 
-        GameSession? mine = myBest is int s
-            ? new GameSession
-            {
-                PlayerId = SampleData.CurrentPlayerId,
-                Score = s,
-                Player = new Player { Id = SampleData.CurrentPlayerId, DisplayName = string.IsNullOrWhiteSpace(PlayerParam) ? "You" : PlayerParam },
-            }
-            : null;
+        var res = await Db.From<GameSession>()
+            .Where(s => s.DeletedAt == null)
+            .Order(s => s.Score, Ordering.Descending)
+            .Range(0, 199)
+            .Get();
 
-        Board = SampleData.GetLeaderboard(GameSettings.LeaderboardSize, mine);
-        standing = SampleData.GetStanding(myBest);
+        // Best score per player
+        var best = res.Models
+            .GroupBy(s => s.PlayerName)
+            .Select(g => (Name: g.Key, Score: g.Max(s => s.Score)))
+            .OrderByDescending(x => x.Score)
+            .ToList();
+
+        // Top N with tied ranks (1, 2, 2, 4)
+        Board = new();
+        var rank = 0;
+        var top = best.Take(GameSettings.LeaderboardSize).ToList();
+        for (var i = 0; i < top.Count; i++)
+        {
+            if (i == 0 || top[i].Score != top[i - 1].Score) rank = i + 1;
+            Board.Add(new LeaderboardEntry(rank, i, top[i].Name, top[i].Score));
+        }
+
+        // "Your best run" card
+        standing = null;
+        if (!string.IsNullOrWhiteSpace(PlayerParam))
+        {
+            var mine = best.FirstOrDefault(b => b.Name == PlayerParam);
+            if (mine.Name is not null)
+                standing = new PlayerStanding(mine.Score, best.Count(b => b.Score > mine.Score) + 1);
+        }
     }
 
     // ---------- Podium styling: yellow, gray, orange ----------

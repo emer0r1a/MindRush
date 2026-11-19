@@ -1,12 +1,24 @@
 {
   "Files": [
     {
-      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\MidtermExam.bundle.scp.css",
-      "PackagePath": "staticwebassets\\MidtermExam.bundle.scp.css"
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\bin\\Debug\\net8.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\obj\\Debug\\net8.0\\compressed\\93k64j72tm.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\obj\\Debug\\net8.0\\scopedcss\\bundle\\MidtermExam.styles.css",
+      "PackagePath": "staticwebassets\\MidtermExam.styles.css"
     },
     {
       "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\wwwroot\\app.css",
       "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\wwwroot\\appsettings.json",
+      "PackagePath": "staticwebassets\\appsettings.json"
     },
     {
       "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\wwwroot\\bootstrap\\bootstrap.min.css",
@@ -19,6 +31,10 @@
     {
       "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\wwwroot\\favicon.png",
       "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "Z:\\L23Y16W36\\Midterm\\MidtermExam\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.MidtermExam.Microsoft.AspNetCore.StaticWebAssets.props",

@@ -151,7 +151,7 @@ public static class SampleData
     {
         var rows = _players.Select(p => (p.Id, p.Name, p.Score)).ToList();
         if (mine is not null)
-            rows.Add((CurrentPlayerId, mine.Player?.DisplayName ?? "You", mine.Score));
+            rows.Add((CurrentPlayerId, string.IsNullOrWhiteSpace(mine.PlayerName) ? "You" : mine.PlayerName, mine.Score));
 
         var ordered = rows
             .OrderByDescending(r => r.Score)
